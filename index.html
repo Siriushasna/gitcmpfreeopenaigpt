@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GitHub → GitMCP Converter</title>
+
+  <!-- Favicon (SVG local + fallback data URL) -->
+  <link rel="icon" type="image/svg+xml" href="icons/favicon.svg" />
+  <link rel="alternate icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23007bff'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' font-size='34' fill='white' font-family='Arial, Helvetica, sans-serif'%3EM%3C/text%3E%3C/svg%3E" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#0d6efd" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Convertisseur <span class="mono">GitHub → GitMCP</span></h1>
+    <p class="sub">Colle une URL GitHub/GitHub Pages et obtiens son serveur MCP distant.</p>
+  </header>
+
+  <main>
+    <!-- Barre dossier (workspace) -->
+    <section class="panel">
+      <label for="workspaceSelect">Dossier (workspace) :</label>
+      <div class="row">
+        <select id="workspaceSelect"></select>
+        <input id="newWorkspaceInput" type="text" placeholder="Nouveau dossier…" />
+        <button id="addWorkspaceBtn" class="secondary">Ajouter</button>
+        <button id="deleteWorkspaceBtn" class="danger">Supprimer dossier</button>
+      </div>
+    </section>
+
+    <!-- Convertisseur -->
+    <section class="panel">
+      <label for="inputUrl">URL d’entrée</label>
+      <div class="row">
+        <input id="inputUrl" type="url" placeholder="https://github.com/username/repo" autocomplete="off" />
+        <button id="pasteBtn" class="secondary">Coller</button>
+      </div>
+
+      <div class="actions row">
+        <button id="convertBtn" class="primary">Convertir</button>
+        <div class="spinner hidden" id="spinner" aria-label="Chargement"></div>
+      </div>
+
+      <div id="result" class="hidden fadein">
+        <label for="outputUrl">URL MCP</label>
+        <div class="row">
+          <input id="outputUrl" type="text" readonly />
+          <button id="copyBtn" class="secondary">Copier</button>
+          <a id="openBtn" class="link" href="#" target="_blank" rel="noopener">Ouvrir</a>
+        </div>
+      </div>
+      <p id="validationMessage" class="validation"></p>
+    </section>
+
+    <!-- Historique -->
+    <section class="panel">
+      <div class="row between">
+        <h2>Historique du dossier</h2>
+        <div class="row gap">
+          <button id="exportBtn" class="secondary">Exporter JSON</button>
+          <label class="upload secondary">
+            Importer JSON
+            <input id="importInput" type="file" accept="application/json" hidden />
+          </label>
+          <button id="clearWorkspaceBtn" class="danger">Vider ce dossier</button>
+        </div>
+      </div>
+
+      <ul id="historyList" class="history"></ul>
+    </section>
+  </main>
+
+  <footer>
+    <small>
+      Règle : <span class="mono">github.com/USER/REPO → gitmcp.io/USER/REPO</span> •
+      <span class="mono">USER.github.io/REPO → USER.gitmcp.io/REPO</span><br />
+      Le bouton <em>Coller</em> nécessite HTTPS ou localhost.
+    </small>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // PWA: enregistrer le service worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
